@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "6589392e-0e66-4688-a987-20e91552697b",
-		"name": "POS Backend - Users",
+		"name": "base-backend-nestjs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "10141207"
 	},
@@ -24,12 +24,10 @@
 							"raw": "{\n  \"username\": \"david\",\n  \"email\": \"david@raison.app\",\n  \"password\": \"admin1234\",\n  \"role\": \"admin\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/users",
-							"protocol": "http",
+							"raw": "{{url}}/api/users",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"users"
@@ -49,12 +47,10 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/users",
-							"protocol": "http",
+							"raw": "{{url}}/api/users",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"users"
@@ -74,12 +70,10 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/users/:id",
-							"protocol": "http",
+							"raw": "{{url}}/api/users/:id",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"users",
@@ -110,12 +104,10 @@
 							"raw": "{\n  \"username\": \"devissonUpdated\",\n  \"phoneNumber\": \"3216549870\",\n  \"role\": \"vendedor\"\n}\n"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/users/:id",
-							"protocol": "http",
+							"raw": "{{url}}/api/users/:id",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"users",
@@ -142,12 +134,10 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/users/:id",
-							"protocol": "http",
+							"raw": "{{url}}/api/users/:id",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"users",
@@ -164,6 +154,68 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usernameOrEmail\": \"aleja\",\n  \"password\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:5000",
+			"type": "string"
 		}
 	]
 }
