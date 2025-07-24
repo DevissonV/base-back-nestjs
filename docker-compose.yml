@@ -1,17 +1,37 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: mi_sistema
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - '5432:5432'
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-net
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT:-3000}:${APP_PORT:-3000}"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "until nc -z db 5432; do echo 'Esperando DB...'; sleep 1; done && npm run start:docker-dev"
+    networks:
+      - backend-net
 
 volumes:
   postgres_data:
+
+networks:
+  backend-net:
