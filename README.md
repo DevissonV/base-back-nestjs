@@ -1,3 +1,4 @@
+
 # Documentación técnica
 
 ## 📁 Estructura del proyecto
@@ -54,18 +55,8 @@ El sistema sigue una arquitectura modular por features, con una capa shared/ par
 
 ```
 npm install
-```
-
-2. Genera el cliente Prisma y aplica las migraciones:
-
-```
 npx prisma generate
 npx prisma migrate dev --name init
-```
-
-3. Inicia el servidor:
-
-```
 npm run start:dev
 ```
 
@@ -75,14 +66,29 @@ La API estará disponible en: `http://localhost:5000/api`
 
 ## Levantar el proyecto con Docker
 
-1. Configura tu archivo `.env`
-2. Ejecuta los contenedores:
+### Ambiente completo (App + DB):
 
 ```
 docker-compose up -d
 ```
 
-Esto levanta el contenedor de PostgreSQL y NestJS, aplicando todo lo necesario automáticamente.
+Esto levanta el contenedor de PostgreSQL y NestJS. Usa `.env` como fuente de variables.
+
+### Solo app (producción con BD externa):
+
+```
+docker compose -f docker-compose.prod.yml up --build
+```
+
+Usa `Dockerfile.prod` y un `.env` con una `DATABASE_URL` real, como Railway, Neon o aws, es decir crea el archivo .env en base al .env-example y configura las variables de entorno
+
+### Solo base de datos:
+
+```
+docker compose -f docker-compose.db.yml up -d
+```
+
+Usalo si desarrollas en local, pero deseas una DB contenida.
 
 ---
 
@@ -94,15 +100,8 @@ Esto levanta el contenedor de PostgreSQL y NestJS, aplicando todo lo necesario a
 
 ## Migraciones Prisma
 
-Para crear una nueva tabla o modificar el schema:
-
-```
+```bash
 npx prisma migrate dev --name nombre_migracion
-```
-
-Para revisar el estado:
-
-```
 npx prisma studio
 ```
 
@@ -110,35 +109,46 @@ npx prisma studio
 
 ## Colección Postman
 
-- Puedes importar las rutas desde la raiz con el archivo `collection.json` (opcional).
-- Asegúrate de configurar la variable `{{base_url}}` con `http://localhost:5000/api`
+- Puedes importar las rutas desde `collection.json`.
+- Usa `{{base_url}} = http://localhost:5000/api`
 
 ---
 
 ## Comandos útiles
 
-| Comando | Descripción |
-|--------|-------------|
-| `npm run start:dev` | Inicia el servidor en modo desarrollo |
-| `npm run format` | Formatea el código con Prettier |
-| `npm run lint` | Ejecuta linter con las reglas definidas |
-| `npx prisma studio` | UI para explorar la base de datos |
-| `npx prisma migrate dev` | Ejecuta migraciones pendientes |
+| Comando                   | Descripción                                 |
+|--------------------------|---------------------------------------------|
+| `npm run start:dev`      | Modo desarrollo                             |
+| `npm run start:prod`     | Modo producción (node dist/main)            |
+| `npm run format`         | Prettier                                    |
+| `npm run lint`           | Eslint                                      |
+| `npx prisma studio`      | UI de la base de datos                      |
+| `npx prisma migrate dev` | Aplica migraciones                          |
 
 ---
 
 ## Generación de módulos
 
-> Puedes crear un módulo con NestJS CLI y luego moverlo a `src/features/<nombre>`
-
-```
+```bash
 nest g resource features/<nombre>
 ```
 
-Luego recuerda:
-- Separar DTOs, controllers, services y repositories
-- Usar `@features` y `@shared` como alias de importación
-- Mantener lógica de acceso a datos dentro del `*.repository.ts`
+Luego:
+- Mover todo a `src/features/<nombre>`
+- Separar bien controladores, dtos, servicios y repositorios
+- Usar alias `@features` y `@shared`
+- Evitar lógica de BD en los servicios
 
 ---
 
+## Estrategia de Dockerización
+
+> El sistema usa 3 modos de Dockerización:
+
+| Archivo                     | Propósito                                                    |
+|----------------------------|--------------------------------------------------------------|
+| `docker-compose.yml`       | Desarrollar todo con contenedores (app + DB)                 |
+| `docker-compose.prod.yml`  | Ejecutar solo la app en contenedor con una BD externa        |
+| `docker-compose.db.yml`    | Ejecutar solo una BD en contenedor, útil para desarrollo local|
+
+---
