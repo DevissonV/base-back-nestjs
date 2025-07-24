@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from '@shared/interceptors/response.interceptor';
 import { HttpExceptionFilter } from '@shared/filters/http-exception.filter';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,7 +26,9 @@ async function bootstrap() {
 
   app.enableCors();
 
-  const port = process.env.APP_PORT || 5000;
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('app.port') || 5000;
+
   await app.listen(port);
   console.log(`App running on port ${port}`);
 }
