@@ -90,6 +90,13 @@ docker compose -f docker-compose.db.yml up -d
 
 Usalo si desarrollas en local, pero deseas una DB contenida.
 
+tener en cuenta que si haces esto *TIENES* que generar las migraciones: 
+
+```
+npx prisma generate
+npx prisma migrate dev --name init
+npm run start:dev
+```
 ---
 
 ## Pruebas unitarias (próximamente)
