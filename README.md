@@ -97,11 +97,24 @@ npx prisma generate
 npx prisma migrate dev --name init
 npm run start:dev
 ```
+
 ---
 
 ## Pruebas unitarias (próximamente)
 
 > En futuras versiones se incluirán pruebas con Jest y Supertest.
+
+---
+
+---
+
+## Para crear las semillas de datos iniciales
+
+Para crear los datos necesarios para levantar la aplicacion ejecutar el seed:
+
+```
+npm run seed:all
+```
 
 ---
 

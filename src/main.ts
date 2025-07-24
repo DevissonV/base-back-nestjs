@@ -1,11 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { ResponseInterceptor } from '@shared/interceptors/response.interceptor';
 import { HttpExceptionFilter } from '@shared/filters/http-exception.filter';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
@@ -30,6 +31,7 @@ async function bootstrap() {
   const port = configService.get<number>('app.port') || 5000;
 
   await app.listen(port);
-  console.log(`App running on port ${port}`);
+  logger.log(`App running on port ${port}`);
 }
+
 bootstrap();
