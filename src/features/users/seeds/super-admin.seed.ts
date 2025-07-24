@@ -7,6 +7,13 @@ const prisma = new PrismaClient();
 const logger = new Logger('SeedSuperAdmin');
 
 export async function seedSuperAdmin() {
+  const isDev = process.env.NODE_ENV === 'development';
+
+  if (!isDev) {
+    logger.warn('SeedSuperAdmin skipped: not in development');
+    return;
+  }
+  
   const exists = await prisma.user.findFirst({
     where: { role: ROLES.SUPERADMIN },
   });
