@@ -20,10 +20,4 @@ export default () => ({
   cors: {
     origins: process.env.CORS_ORIGINS?.split(',') || [],
   },
-  roles: {
-    admin: process.env.ROLE_ADMIN,
-    user: process.env.ROLE_USER,
-    vendedor: process.env.ROLE_VENDEDOR,
-    superadmin: process.env.ROLE_SUPERADMIN,
-  },
 });

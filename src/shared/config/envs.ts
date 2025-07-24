@@ -16,10 +16,5 @@ export const validationSchema = Joi.object({
   DB_NAME: Joi.string().required(),
   DB_SCHEMA: Joi.string().required(),
 
-  ROLE_ADMIN: Joi.string().required(),
-  ROLE_USER: Joi.string().required(),
-  ROLE_VENDEDOR: Joi.string().required(),
-  ROLE_SUPERADMIN: Joi.string().required(),
-
   CORS_ORIGINS: Joi.string().required(),
 });

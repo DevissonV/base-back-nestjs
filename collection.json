@@ -12,6 +12,16 @@
 				{
 					"name": "create",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -21,12 +31,12 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"david\",\n  \"email\": \"david@raison.app\",\n  \"password\": \"admin1234\",\n  \"role\": \"admin\"\n}"
+							"raw": "{\n  \"username\": \"aleja\",\n  \"email\": \"aleja@raison.app\",\n  \"password\": \"123456\",\n  \"role\": \"admin\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users",
+							"raw": "{{URL}}/api/users",
 							"host": [
-								"{{url}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -39,6 +49,16 @@
 				{
 					"name": "get-all",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -47,9 +67,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/users",
+							"raw": "{{URL}}/api/users",
 							"host": [
-								"{{url}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -62,6 +82,16 @@
 				{
 					"name": "get-by-id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -70,9 +100,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/users/:id",
+							"raw": "{{URL}}/api/users/:id",
 							"host": [
-								"{{url}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -104,9 +134,9 @@
 							"raw": "{\n  \"username\": \"devissonUpdated\",\n  \"phoneNumber\": \"3216549870\",\n  \"role\": \"vendedor\"\n}\n"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/:id",
+							"raw": "{{URL}}/api/users/:id",
 							"host": [
-								"{{url}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -126,6 +156,16 @@
 				{
 					"name": "delete",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -134,9 +174,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/users/:id",
+							"raw": "{{URL}}/api/users/:id",
 							"host": [
-								"{{url}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -152,6 +192,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "get-me-info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/users/me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -160,12 +229,33 @@
 			"item": [
 				{
 					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Save access and refresh tokens\", () => {",
+									"  const { data: { accessToken, refreshToken } } = pm.response.json();",
+									"",
+									"  pm.collectionVariables.set('TOKEN', accessToken);",
+									"  pm.collectionVariables.set('REFRESH_TOKEN', refreshToken);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"usernameOrEmail\": \"aleja\",\n  \"password\": \"\"\n}",
+							"raw": "{\n  \"usernameOrEmail\": \"aleja\",\n  \"password\": \"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -173,9 +263,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/api/auth/login",
+							"raw": "{{URL}}/api/auth/login",
 							"host": [
-								"{{url}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -213,8 +303,18 @@
 	],
 	"variable": [
 		{
-			"key": "url",
+			"key": "URL",
 			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "REFRESH_TOKEN",
+			"value": "",
 			"type": "string"
 		}
 	]
