@@ -58,6 +58,10 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.validateUser(dto);
 
+    await this.usersRepo.updateById(user.id, {
+      lastLogin: new Date(),
+    });
+
     const payload = { sub: user.id, role: user.role };
 
     const jwtConfig = this.configService.get('jwt');
