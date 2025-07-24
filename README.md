@@ -2,40 +2,39 @@
 
 ## 📁 Estructura del proyecto
 
+El sistema sigue una arquitectura modular por features, con una capa shared/ para lógica transversal y reutilizable. Cada módulo encapsula su propia lógica de negocio, controladores, servicios y acceso a datos, siguiendo buenas prácticas de escalabilidad.
+
 ```
-┣ 📂.github
-┣ 📂prisma
-┃ ┣ 📜schema.prisma
-┃ ┗ 📜migrations/
-┣ 📂src
-┃ ┣ 📂features
-┃ ┃ ┗ 📂users
-┃ ┃   ┣ 📂controllers
-┃ ┃   ┣ 📂dtos
-┃ ┃   ┣ 📂entities
-┃ ┃   ┣ 📂repository
-┃ ┃   ┣ 📂services
-┃ ┃   ┗ 📜users.module.ts
-┃ ┣ 📂shared
-┃ ┃ ┣ 📂config
-┃ ┃ ┃ ┣ 📜configuration.ts
-┃ ┃ ┃ ┗ 📜envs.ts
-┃ ┃ ┣ 📂filters
-┃ ┃ ┃ ┗ 📜http-exception.filter.ts
-┃ ┃ ┣ 📂interceptors
-┃ ┃ ┃ ┗ 📜response.interceptor.ts
-┃ ┃ ┣ 📂prisma
-┃ ┃ ┃ ┗ 📜prisma.service.ts
-┃ ┃ ┗ 📂utils
-┃ ┃   ┗ 📜hash.util.ts
-┃ ┣ 📜app.module.ts
-┃ ┗ 📜main.ts
-┣ 📜.env
-┣ 📜.env.example
-┣ 📜docker-compose.yml
-┣ 📜package.json
-┣ 📜tsconfig.json
-┗ 📜README.md
+📦 src/
+ ┣ 📂features/              # Módulos funcionales del negocio
+ ┃ ┣ 📂auth/                # Módulo de autenticación (login, tokens)
+ ┃ ┃ ┣ 📂controllers/       # Endpoints HTTP
+ ┃ ┃ ┣ 📂dtos/              # Validación y tipado de entrada
+ ┃ ┃ ┣ 📂services/          # Lógica de negocio
+ ┃ ┃ ┗ 📜auth.module.ts
+ ┃ ┣ 📂users/               # Módulo de gestión de usuarios
+ ┃ ┃ ┣ 📂controllers/
+ ┃ ┃ ┣ 📂dtos/
+ ┃ ┃ ┣ 📂repository/        # Acceso a base de datos (Prisma)
+ ┃ ┃ ┗ 📜users.module.ts
+ ┣ 📂shared/                # Código reutilizable y transversal
+ ┃ ┣ 📂config/              # Configuración del entorno
+ ┃ ┃ ┣ 📜configuration.ts
+ ┃ ┃ ┗ 📜envs.ts
+ ┃ ┣ 📂decorators/          # Decoradores personalizados (ej: @CurrentUser)
+ ┃ ┣ 📂filters/             # Filtros globales de excepciones
+ ┃ ┃ ┗ 📜http-exception.filter.ts
+ ┃ ┣ 📂guards/              # Guards de autorización/autenticación
+ ┃ ┣ 📂interceptors/        # Interceptores globales de respuesta
+ ┃ ┃ ┗ 📜response.interceptor.ts
+ ┃ ┣ 📂prisma/              # PrismaService centralizado
+ ┃ ┃ ┗ 📜prisma.service.ts
+ ┃ ┗ 📂utils/               # Funciones utilitarias (hash, fechas, etc.)
+ ┃   ┗ 📜hash.util.ts
+ ┣ 📜main.ts                # Punto de entrada principal
+ ┗ 📜app.module.ts          # Módulo raíz de la aplicación
+
+
 ```
 
 ##  Requisitos previos
