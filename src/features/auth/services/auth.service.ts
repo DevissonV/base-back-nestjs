@@ -50,35 +50,42 @@ export class AuthService {
     }
   }
 
-  /**
-   * Authenticates the user and returns signed JWT access and refresh tokens.
-   * @param dto - Login credentials.
-   * @returns An object containing accessToken and refreshToken.
-   */
-  async login(dto: LoginDto) {
-    const user = await this.validateUser(dto);
+	/**
+	 * Authenticates the user and returns signed JWT access and refresh tokens.
+	 * @param dto - Login credentials.
+	 * @returns An object containing accessToken and refreshToken.
+	 */
+	async login(dto: LoginDto) {
+		const user = await this.validateUser(dto);
 
-    await this.usersRepo.updateById(user.id, {
-      lastLogin: new Date(),
-    });
+		await this.usersRepo.updateById(user.id, {
+			lastLogin: new Date(),
+		});
 
-    const payload = { sub: user.id, role: user.role };
+		const payload = {
+			sub: user.id,
+			email: user.email,
+			username: user.username,
+			role: user.role,
+			documentId: user.documentId,
+			documentType: user.documentType,
+		};
 
-    const jwtConfig = this.configService.get('jwt');
+		const jwtConfig = this.configService.get('jwt');
 
-    const accessToken = this.jwtService.sign(payload, {
-      secret: jwtConfig.secret,
-      expiresIn: jwtConfig.accessExpiration,
-    });
+		const accessToken = this.jwtService.sign(payload, {
+			secret: jwtConfig.secret,
+			expiresIn: jwtConfig.accessExpiration,
+		});
 
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: jwtConfig.refreshSecret,
-      expiresIn: jwtConfig.refreshExpiration,
-    });
+		const refreshToken = this.jwtService.sign(payload, {
+			secret: jwtConfig.refreshSecret,
+			expiresIn: jwtConfig.refreshExpiration,
+		});
 
-    return {
-      accessToken,
-      refreshToken,
-    };
-  }
+		return {
+			accessToken,
+			refreshToken,
+		};
+	}
 }

@@ -4,12 +4,15 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { JwtPayload } from '@features/auth/types/jwt-payload.interface';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  
+  private readonly logger = new Logger(HttpExceptionFilter.name);
+
   /**
    * Handles all unhandled exceptions and formats the response.
    * Converts any thrown error into a structured API error response.
@@ -19,7 +22,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
    */
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
+    const req = ctx.getRequest<Request>();
     const res = ctx.getResponse<Response>();
+
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -31,11 +36,23 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? response
         : response?.message || 'Unexpected error';
 
-    const errors = typeof response === 'object' && 'errors' in response
-      ? response.errors
-      : typeof message === 'object'
-        ? message
-        : { general: [message] };
+    const errors =
+      typeof response === 'object' && 'errors' in response
+        ? response.errors
+        : typeof message === 'object'
+          ? message
+          : { general: [message] };
+
+    const user = req.user as JwtPayload;
+
+    this.logger.error({
+      path: req.url,
+      method: req.method,
+      status,
+      user: user?.sub ?? null,
+      message: exception.message ?? message,
+      stack: exception.stack,
+    });
 
     res.status(status).json({
       code: status,

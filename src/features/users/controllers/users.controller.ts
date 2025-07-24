@@ -1,12 +1,41 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { UserEntity } from '../entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { JwtPayload } from '@features/auth/types/jwt-payload.interface';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { RolesGuard } from '@shared/guards/roles.guard';
+
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  /**
+   * Returns the authenticated user's payload.
+   * 
+   * @param user - Extracted from JWT token.
+   * @returns The user info from the token.
+   */
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @Get('me')
+  getProfile(@CurrentUser() user: JwtPayload) {
+    console.log('🔥 User:', user);
+    return this.usersService.getById(user.sub);
+  }
 
   /**
    * Creates a new user in the system.
