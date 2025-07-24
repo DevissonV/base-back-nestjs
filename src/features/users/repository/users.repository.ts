@@ -18,8 +18,12 @@ export class UsersRepository {
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
-  }
+  return this.prisma.user.findMany({
+    where: {
+      isActive: true,
+    },
+  });
+}
 
   async findById(id: string) {
     return this.prisma.user.findUnique({
