@@ -88,4 +88,62 @@ export class AuthService {
 			refreshToken,
 		};
 	}
+
+  /**
+   * Validates a refresh token and issues new access and refresh tokens.
+   * @param refreshToken - The refresh token to verify.
+   * @returns An object containing new access and refresh tokens.
+   * @throws UnauthorizedException if the token is invalid, expired, or the user is inactive.
+   */
+  async refreshToken(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get<string>('jwt.refreshSecret'),
+      });
+
+      const user = await this.usersRepo.findById(payload.sub);
+      if (!user || !user.isActive) {
+        throw new UnauthorizedException('Invalid user');
+      }
+
+      return this.generateTokens(user);
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
+
+    /**
+   * Generates access and refresh tokens for a given user.
+   * @param user - The user to include in the token payload.
+   * @returns An object containing accessToken and refreshToken.
+   */
+  private generateTokens(user: User): { accessToken: string; refreshToken: string } {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      documentId: user.documentId,
+      documentType: user.documentType,
+    };
+
+    const jwtConfig = this.configService.get('jwt');
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: jwtConfig.secret,
+      expiresIn: jwtConfig.accessExpiration,
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: jwtConfig.refreshSecret,
+      expiresIn: jwtConfig.refreshExpiration,
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+
 }
