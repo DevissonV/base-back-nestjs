@@ -15,23 +15,30 @@ export class AuthService {
     private readonly usersRepo: UsersRepository,
     private readonly jwtService: JwtService,
   ) {}
-  
+
+  /**
+   * Validates user credentials by checking email/username and password.
+   * Throws UnauthorizedException if credentials are invalid.
+   * @param usernameOrEmail - User identifier (email or username).
+   * @param password - Plain text password to verify.
+   * @returns The authenticated user if credentials are valid.
+   */
   async validateUser({ usernameOrEmail, password }: LoginDto): Promise<User> {
     try {
       const isEmail = usernameOrEmail.includes('@');
       const user = isEmail
-      ? await this.usersRepo.findByEmail(usernameOrEmail)
-      : await this.usersRepo.findByUsername(usernameOrEmail);
-      
+        ? await this.usersRepo.findByEmail(usernameOrEmail)
+        : await this.usersRepo.findByUsername(usernameOrEmail);
+
       if (!user || !user.isActive) {
         throw new UnauthorizedException('Invalid credentials');
       }
-      
+
       const passwordValid = await comparePasswords(password, user.password);
       if (!passwordValid) {
         throw new UnauthorizedException('Invalid credentials');
       }
-      
+
       return user;
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -40,22 +47,27 @@ export class AuthService {
       throw new InternalServerErrorException('Unexpected error during validation');
     }
   }
-  
+
+  /**
+   * Generates JWT access and refresh tokens for a valid user.
+   * @param dto - Login credentials (email/username and password).
+   * @returns An object with accessToken and refreshToken.
+   */
   async login(dto: LoginDto) {
     const user = await this.validateUser(dto);
-    
+
     const payload = { sub: user.id, role: user.role };
-    
+
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION,
     });
-    
+
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRATION,
     });
-    
+
     return {
       accessToken,
       refreshToken,
