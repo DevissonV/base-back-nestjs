@@ -5,34 +5,33 @@
 El sistema sigue una arquitectura modular por features, con una capa shared/ para lógica transversal y reutilizable. Cada módulo encapsula su propia lógica de negocio, controladores, servicios y acceso a datos, siguiendo buenas prácticas de escalabilidad.
 
 ```
-📦 src/
- ┣ 📂features/              # Módulos funcionales del negocio
- ┃ ┣ 📂auth/                # Módulo de autenticación (login, tokens)
- ┃ ┃ ┣ 📂controllers/       # Endpoints HTTP
- ┃ ┃ ┣ 📂dtos/              # Validación y tipado de entrada
- ┃ ┃ ┣ 📂services/          # Lógica de negocio
- ┃ ┃ ┗ 📜auth.module.ts
- ┃ ┣ 📂users/               # Módulo de gestión de usuarios
- ┃ ┃ ┣ 📂controllers/
- ┃ ┃ ┣ 📂dtos/
- ┃ ┃ ┣ 📂repository/        # Acceso a base de datos (Prisma)
- ┃ ┃ ┗ 📜users.module.ts
- ┣ 📂shared/                # Código reutilizable y transversal
- ┃ ┣ 📂config/              # Configuración del entorno
- ┃ ┃ ┣ 📜configuration.ts
- ┃ ┃ ┗ 📜envs.ts
- ┃ ┣ 📂decorators/          # Decoradores personalizados (ej: @CurrentUser)
- ┃ ┣ 📂filters/             # Filtros globales de excepciones
- ┃ ┃ ┗ 📜http-exception.filter.ts
- ┃ ┣ 📂guards/              # Guards de autorización/autenticación
- ┃ ┣ 📂interceptors/        # Interceptores globales de respuesta
- ┃ ┃ ┗ 📜response.interceptor.ts
- ┃ ┣ 📂prisma/              # PrismaService centralizado
- ┃ ┃ ┗ 📜prisma.service.ts
- ┃ ┗ 📂utils/               # Funciones utilitarias (hash, fechas, etc.)
- ┃   ┗ 📜hash.util.ts
- ┣ 📜main.ts                # Punto de entrada principal
- ┗ 📜app.module.ts          # Módulo raíz de la aplicación
+📂 src/
+┣ 📂 features/              # Módulos funcionales del negocio
+┃ ┣ 📂 auth/                # Módulo de autenticación (login, tokens)
+┃ ┃ ┣ 📂 controllers/
+┃ ┃ ┣ 📂 dtos/
+┃ ┃ ┣ 📂 services/
+┃ ┃ ┣ 📂 strategies/
+┃ ┃ ┣ 📂 types/
+┃ ┃ ┗ 📜 auth.module.ts
+┃ ┣ 📂 users/               # Módulo de gestión de usuarios
+┃ ┃ ┣ 📂 controllers/
+┃ ┃ ┣ 📂 dtos/
+┃ ┃ ┣ 📂 entities/
+┃ ┃ ┣ 📂 repository/
+┃ ┃ ┣ 📂 services/
+┃ ┃ ┗ 📜 users.module.ts
+┣ 📂 shared/                # Código reutilizable y transversal
+┃ ┣ 📂 config/              # Configuración del entorno
+┃ ┣ 📂 constants/           # Enums globales (roles, etc)
+┃ ┣ 📂 decorators/          # Decoradores personalizados (ej: @CurrentUser)
+┃ ┣ 📂 filters/             # Filtros globales de excepciones
+┃ ┣ 📂 guards/              # Guards de autorización/autenticación
+┃ ┣ 📂 interceptors/        # Interceptores globales de respuesta
+┃ ┣ 📂 prisma/              # PrismaService centralizado
+┃ ┗ 📂 utils/               # Funciones utilitarias (hash, fechas, etc.)
+┣ 📜 app.module.ts          # Módulo raíz de la aplicación
+┗ 📜 main.ts               # Punto de entrada principal
 
 
 ```
