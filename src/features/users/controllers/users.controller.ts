@@ -8,26 +8,56 @@ import { UserEntity } from '../entities/user.entity';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  /**
+   * Creates a new user in the system.
+   * 
+   * @param dto - The data for the new user.
+   * @returns The created user entity.
+   */
   @Post()
   create(@Body() dto: CreateUserDto): Promise<UserEntity> {
     return this.usersService.createUser(dto);
   }
 
+  /**
+   * Retrieves all active users.
+   * 
+   * @returns A list of user entities.
+   */
   @Get()
   findAll(): Promise<UserEntity[]> {
     return this.usersService.getAllUsers();
   }
 
+  /**
+   * Retrieves a user by their unique identifier.
+   * 
+   * @param id - UUID of the user.
+   * @returns The user entity if found.
+   */
   @Get(':id')
   findById(@Param('id') id: string): Promise<UserEntity> {
     return this.usersService.getById(id);
   }
 
+  /**
+   * Updates the user with the given ID.
+   * 
+   * @param id - UUID of the user to update.
+   * @param dto - Partial data to update.
+   * @returns The updated user entity.
+   */
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateUserDto): Promise<UserEntity> {
     return this.usersService.updateUser(id, dto);
   }
 
+  /**
+   * Soft-deletes a user by marking them as inactive.
+   * 
+   * @param id - UUID of the user to delete.
+   * @returns The user entity after being deactivated.
+   */
   @Delete(':id')
   remove(@Param('id') id: string): Promise<UserEntity> {
     return this.usersService.deleteUser(id);

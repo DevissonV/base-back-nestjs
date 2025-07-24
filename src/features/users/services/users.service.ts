@@ -9,6 +9,12 @@ import { UpdateUserDto } from '../dtos/update-user.dto';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
+  /**
+   * Creates a new user after hashing the password.
+   * @param input - Data to create the user.
+   * @returns The created user entity without the password.
+   * @throws InternalServerErrorException if the creation fails.
+   */
   async createUser(input: CreateUserDto): Promise<UserEntity> {
     try {
       const hashedPassword = await hashPassword(input.password);
@@ -25,6 +31,11 @@ export class UsersService {
     }
   }
 
+  /**
+   * Retrieves all active users.
+   * @returns A list of user entities.
+   * @throws InternalServerErrorException if retrieval fails.
+   */
   async getAllUsers(): Promise<UserEntity[]> {
     try {
       const users = await this.usersRepository.findAll();
@@ -34,6 +45,13 @@ export class UsersService {
     }
   }
 
+  /**
+   * Retrieves a user by ID.
+   * @param id - UUID of the user.
+   * @returns The user entity.
+   * @throws NotFoundException if the user is not found.
+   * @throws InternalServerErrorException if retrieval fails.
+   */
   async getById(id: string): Promise<UserEntity> {
     try {
       const user = await this.usersRepository.findById(id);
@@ -46,6 +64,14 @@ export class UsersService {
     }
   }
 
+  /**
+   * Updates a user by ID.
+   * @param id - UUID of the user.
+   * @param input - Partial user data to update.
+   * @returns The updated user entity.
+   * @throws NotFoundException if the user is not found.
+   * @throws InternalServerErrorException if the update fails.
+   */
   async updateUser(id: string, input: UpdateUserDto): Promise<UserEntity> {
     try {
       const user = await this.usersRepository.findById(id);
@@ -58,6 +84,13 @@ export class UsersService {
     }
   }
 
+  /**
+   * Soft deletes a user by ID.
+   * @param id - UUID of the user.
+   * @returns The user entity after deactivation.
+   * @throws NotFoundException if the user is not found.
+   * @throws InternalServerErrorException if deletion fails.
+   */
   async deleteUser(id: string): Promise<UserEntity> {
     try {
       const user = await this.usersRepository.findById(id);
@@ -70,6 +103,11 @@ export class UsersService {
     }
   }
 
+  /**
+   * Maps a full user model to a public-facing entity (excludes password).
+   * @param user - Raw user record from the database.
+   * @returns The sanitized user entity.
+   */
   private mapToEntity(user: any): UserEntity {
     const { password, ...rest } = user;
     return rest;

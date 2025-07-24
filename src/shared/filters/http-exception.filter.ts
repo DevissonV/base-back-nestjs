@@ -9,6 +9,14 @@ import { Response } from 'express';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  
+  /**
+   * Handles all unhandled exceptions and formats the response.
+   * Converts any thrown error into a structured API error response.
+   *
+   * @param exception - The caught exception (can be an HttpException or any error).
+   * @param host - The arguments host to extract the HTTP context.
+   */
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
