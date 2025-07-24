@@ -16,6 +16,14 @@ export class RolesGuard implements CanActivate {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * Determines whether the current request is authorized based on user roles.
+   * Extracts required roles from the route handler/class metadata and compares them
+   * with the user's role from the JWT payload.
+   *
+   * @param context - The execution context for the request.
+   * @returns True if the user has permission, otherwise throws ForbiddenException.
+   */
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(
       ROLES_KEY,

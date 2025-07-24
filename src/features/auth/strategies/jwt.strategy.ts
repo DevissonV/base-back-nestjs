@@ -14,7 +14,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  /**
+   * Validates the JWT payload extracted from the token.
+   * Called automatically by Passport after token verification.
+   * @param payload - Decoded JWT payload
+   * @returns The payload to attach to the request object
+   */
   async validate(payload: JwtPayload) {
-      return payload;
+    return payload;
   }
 }
