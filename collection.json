@@ -122,6 +122,16 @@
 				{
 					"name": "patch",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -131,7 +141,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"devissonUpdated\",\n  \"phoneNumber\": \"3216549870\",\n  \"role\": \"vendedor\"\n}\n"
+							"raw": "{\n  \"username\": \"maycolete\",\n  \"phoneNumber\": \"3216549870\",\n  \"role\": \"vendedor\"\n}\n"
 						},
 						"url": {
 							"raw": "{{URL}}/api/users/:id",
@@ -146,7 +156,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "8d11b23b-e7be-4dbe-9631-7650a50541b6"
+									"value": "7795b846-ae24-4528-8e76-e3a39465b301"
 								}
 							]
 						}
