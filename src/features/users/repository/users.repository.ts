@@ -8,16 +8,15 @@ export class UsersRepository {
 
   /**
    * Persists a new user in the database.
-   * @param data - User data including hashed password and createdBy metadata.
+   * @param data - User data including hashed password and audit metadata.
    * @returns The created user record.
    */
-  async createUser(data: CreateUserDto & { password: string; createdBy: string }) {
+  async createUser(data: CreateUserDto & { password: string }) {
     return this.prisma.user.create({
       data: {
         ...data,
-        createdAt: new Date(),
         isActive: true,
-        createdBy: data.createdBy,
+        createdAt: new Date(),
       },
     });
   }
@@ -64,8 +63,9 @@ export class UsersRepository {
 
   /**
    * Soft deletes a user by setting isActive to false and tracking metadata.
+   * The `deletedBy` field is injected by the AuditInterceptor.
    * @param id - UUID of the user to delete.
-   * @param deletedBy - UUID of the user performing the deletion.
+   * @param deletedBy - ID of the user performing the deletion.
    * @returns The updated (deactivated) user record.
    */
   async softDelete(id: string, deletedBy: string) {

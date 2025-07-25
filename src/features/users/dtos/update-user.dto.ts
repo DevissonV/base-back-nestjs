@@ -3,9 +3,12 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  IsUUID,
+  IsDate,
   Length,
 } from 'class-validator';
 import { Role, DocumentType } from '@prisma/client';
+import { Type } from 'class-transformer';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -37,4 +40,15 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(DocumentType)
   documentType?: DocumentType;
+
+  // Audit
+  @IsOptional()
+  @IsUUID()
+  updatedBy?: string;
+
+  // Audit
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  updatedAt?: Date;
 }

@@ -4,6 +4,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { ResponseInterceptor } from '@shared/interceptors/response.interceptor';
 import { HttpExceptionFilter } from '@shared/filters/http-exception.filter';
 import { ConfigService } from '@nestjs/config';
+import { AuditInterceptor } from '@shared/interceptors/audit.interceptor';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -22,7 +23,11 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalInterceptors(
+    new ResponseInterceptor(),
+    new AuditInterceptor(), 
+  );
+
   app.useGlobalFilters(new HttpExceptionFilter());
 
   app.enableCors();

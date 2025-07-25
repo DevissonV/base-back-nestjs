@@ -3,9 +3,12 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  IsUUID,
+  IsDate,
   Length,
 } from 'class-validator';
 import { Role, DocumentType } from '@prisma/client';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
   @IsString()
@@ -33,4 +36,15 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(DocumentType)
   document_type?: DocumentType;
+
+  // Audit
+  @IsOptional()
+  @IsUUID()
+  createdBy?: string;
+
+  // Audit
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  createdAt?: Date;
 }

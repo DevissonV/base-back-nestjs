@@ -90,16 +90,20 @@ export class UsersController {
   }
 
   /**
-   * Soft-deletes a user by marking them as inactive.
-   * Only accessible to admin.
-   * 
-   * @param id - UUID of the user to delete.
-   * @returns The user entity after being deactivated.
-   */
+ * Soft-deletes a user by marking them as inactive.
+ * Only accessible to admin.
+ * 
+ * @param id - UUID of the user to delete.
+ * @param body - Includes audit fields injected by AuditInterceptor.
+ * @returns The user entity after being deactivated.
+ */
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(ROLES.ADMIN)
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<UserEntity> {
-    return this.usersService.deleteUser(id);
+  remove(
+    @Param('id') id: string,
+    @Body() body: { deletedBy: string }
+  ): Promise<UserEntity> {
+    return this.usersService.deleteUser(id, body);
   }
 }

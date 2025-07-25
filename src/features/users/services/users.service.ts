@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { UsersRepository } from '../repository/users.repository';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import { UpdateUserDto } from '../dtos/update-user.dto';
 import { hashPassword } from '@shared/utils/hash.util';
 import { UserEntity } from '../entities/user.entity';
-import { UpdateUserDto } from '../dtos/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,7 +26,6 @@ export class UsersService {
       const user = await this.usersRepository.createUser({
         ...input,
         password: hashedPassword,
-        createdBy: 'system',
       });
 
       return this.mapToEntity(user);
@@ -87,16 +90,17 @@ export class UsersService {
   /**
    * Soft deletes a user by ID.
    * @param id - UUID of the user.
+   * @param data - Object containing deletedBy (injected by AuditInterceptor).
    * @returns The user entity after deactivation.
    * @throws NotFoundException if the user is not found.
    * @throws InternalServerErrorException if deletion fails.
    */
-  async deleteUser(id: string): Promise<UserEntity> {
+  async deleteUser(id: string, data: { deletedBy: string }): Promise<UserEntity> {
     try {
       const user = await this.usersRepository.findById(id);
       if (!user) throw new NotFoundException('User not found');
 
-      const deleted = await this.usersRepository.softDelete(id, 'system');
+      const deleted = await this.usersRepository.softDelete(id, data.deletedBy);
       return this.mapToEntity(deleted);
     } catch (error) {
       throw new InternalServerErrorException('Error deleting user');
