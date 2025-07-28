@@ -30,14 +30,39 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
    */
   intercept(_: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map((data) => ({
-        code: 200,
-        message: 'Success',
-        data,
-        metadata: {
+      map((data) => {
+        const metadata = {
           timestamp: new Date().toISOString(),
-        },
-      })),
+        };
+
+        if (
+          data &&
+          typeof data === 'object' &&
+          'data' in data &&
+          'total' in data &&
+          'page' in data &&
+          'totalPages' in data
+        ) {
+          return {
+            code: 200,
+            message: 'Success',
+            data: data.data,
+            metadata: {
+              ...metadata,
+              total: data.total,
+              page: data.page,
+              totalPages: data.totalPages,
+            },
+          };
+        }
+
+        return {
+          code: 200,
+          message: 'Success',
+          data,
+          metadata,
+        };
+      }),
     );
   }
 }
