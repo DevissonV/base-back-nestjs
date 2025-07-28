@@ -8,6 +8,8 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { hashPassword } from '@shared/utils/hash.util';
 import { UserEntity } from '../entities/user.entity';
+import { SearchUsersDto } from '../dtos/search-user.dto';
+import { UserCriteria } from '../repository/user.criteria';
 
 @Injectable()
 export class UsersService {
@@ -39,14 +41,14 @@ export class UsersService {
    * @returns A list of user entities.
    * @throws InternalServerErrorException if retrieval fails.
    */
-  async getAllUsers(): Promise<UserEntity[]> {
-    try {
-      const users = await this.usersRepository.findAll();
-      return users.map((user) => this.mapToEntity(user));
-    } catch (error) {
-      throw new InternalServerErrorException('Error retrieving users');
-    }
+  async getAllUsers(dto: SearchUsersDto) {
+  try {
+    const criteria = new UserCriteria(dto);
+    return await this.usersRepository.findAllWithCriteria(criteria);
+  } catch (error) {
+    throw new InternalServerErrorException('Error retrieving users');
   }
+}
 
   /**
    * Retrieves a user by ID.
