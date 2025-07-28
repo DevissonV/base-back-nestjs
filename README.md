@@ -7,31 +7,28 @@ El sistema sigue una arquitectura modular por features, con una capa shared/ par
 
 ```
 📂 src/
-┣ 📂 features/              # Módulos funcionales del negocio
-┃ ┣ 📂 auth/                # Módulo de autenticación (login, tokens)
-┃ ┃ ┣ 📂 controllers/
-┃ ┃ ┣ 📂 dtos/
-┃ ┃ ┣ 📂 services/
-┃ ┃ ┣ 📂 strategies/
-┃ ┃ ┣ 📂 types/
-┃ ┃ ┗ 📜 auth.module.ts
-┃ ┣ 📂 users/               # Módulo de gestión de usuarios
-┃ ┃ ┣ 📂 controllers/
-┃ ┃ ┣ 📂 dtos/
-┃ ┃ ┣ 📂 entities/
-┃ ┃ ┣ 📂 repository/
-┃ ┃ ┣ 📂 services/
-┃ ┃ ┗ 📜 users.module.ts
-┣ 📂 shared/                # Código reutilizable y transversal
-┃ ┣ 📂 config/              # Configuración del entorno
-┃ ┣ 📂 constants/           # Enums globales (roles, etc)
-┃ ┣ 📂 decorators/          # Decoradores personalizados (ej: @CurrentUser)
-┃ ┣ 📂 filters/             # Filtros globales de excepciones
-┃ ┣ 📂 guards/              # Guards de autorización/autenticación
-┃ ┣ 📂 interceptors/        # Interceptores globales de respuesta
-┃ ┣ 📂 prisma/              # PrismaService centralizado
-┃ ┗ 📂 utils/               # Funciones utilitarias (hash, fechas, etc.)
-┣ 📜 app.module.ts          # Módulo raíz de la aplicación
+┣ 📂docker/                # Dockerfiles for development and production
+┣ 📂prisma/                # Prisma schema, migrations and seed scripts
+┃ ┣ 📂migrations/          # Versioned DB schema changes
+┃ ┣ 📂seed/                # Seeders for initial DB data
+┃ ┗ 📜schema.prisma        # Main Prisma schema definition
+┣ 📂src/                   # Application source code
+┃ ┣ 📂features/            # Domain modules grouped by feature (auth, users, etc.)
+┃ ┃ ┣ 📂auth/              # Authentication logic
+┃ ┃ ┗ 📂users/             # User management logic
+┃ ┣ 📂shared/              # Reusable/shared infrastructure (config, interceptors, guards, etc.)
+┃ ┃ ┣ 📂config/            # Environment configuration loader and schema
+┃ ┃ ┣ 📂constants/         # Global enums or constants (e.g. roles)
+┃ ┃ ┣ 📂criteria/          # Generic filtering/pagination helpers
+┃ ┃ ┣ 📂database/          # Base repositories or DB helpers
+┃ ┃ ┣ 📂decorators/        # Custom decorators (e.g. @CurrentUser, @Roles)
+┃ ┃ ┣ 📂filters/           # Global exception filters
+┃ ┃ ┣ 📂guards/            # Route guards (e.g. RolesGuard)
+┃ ┃ ┣ 📂interceptors/      # Response and audit interceptors
+┃ ┃ ┣ 📂prisma/            # Prisma service wrapper
+┃ ┃ ┣ 📂utils/             # Utility functions (e.g. hash, error handlers)
+┃ ┃ ┗ 📜shared.module.ts   # Shared module importable across features
+┃ ┣ 📜app.module.ts        # Root application module
 ┗ 📜 main.ts               # Punto de entrada principal
 
 

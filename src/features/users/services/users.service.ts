@@ -9,6 +9,7 @@ import { hashPassword } from '@shared/utils/hash.util';
 import { UserEntity } from '../entities/user.entity';
 import { SearchUsersDto } from '../dtos/search-user.dto';
 import { CriteriaService } from '@shared/criteria/criteria.service';
+import { handlePrismaError } from '@shared/utils/handle-prisma-error.util';
 
 @Injectable()
 export class UsersService {
@@ -18,26 +19,30 @@ export class UsersService {
   ) {}
 
   /**
-   * Creates a new user in the system after hashing the password.
+   * Creates a new user in the system after hashing their password.
    *
-   * @param input - The DTO containing user creation data.
-   * @returns The created user entity with sensitive fields removed.
+   * @param input - Data required to create a new user.
+   * @returns The created user entity, excluding sensitive fields like password.
+   * @throws ConflictException if the email or username already exists (handled by `handlePrismaError`).
    */
   async createUser(input: CreateUserDto): Promise<UserEntity> {
     const hashedPassword = await hashPassword(input.password);
-    const user = await this.usersRepository.create({
-      ...input,
-      password: hashedPassword,
-    });
-
-    return this.mapToEntity(user);
+    try {
+      const user = await this.usersRepository.create({
+        ...input,
+        password: hashedPassword,
+      });
+      return this.mapToEntity(user);
+    } catch (error) {
+      handlePrismaError(error);
+    }
   }
 
   /**
-   * Retrieves users from the database based on search filters and pagination.
+   * Retrieves a paginated and filtered list of users based on the given search DTO.
    *
-   * @param dto - The DTO containing filters and pagination options.
-   * @returns A paginated list of users matching the criteria.
+   * @param dto - DTO containing filters and pagination settings.
+   * @returns An object containing the matched users and total count.
    */
   async getAllUsers(dto: SearchUsersDto) {
     return this.criteriaService.getAll({
@@ -56,11 +61,11 @@ export class UsersService {
   }
 
   /**
-   * Retrieves a single user by their unique ID.
+   * Retrieves a user by their unique ID.
    *
    * @param id - UUID of the user to retrieve.
-   * @returns The user entity if found.
-   * @throws NotFoundException if no user is found with the given ID.
+   * @returns The user entity.
+   * @throws NotFoundException if no user with the provided ID is found.
    */
   async getById(id: string): Promise<UserEntity> {
     const user = await this.usersRepository.findById(id);
@@ -71,38 +76,47 @@ export class UsersService {
   }
 
   /**
-   * Updates a user's information by their unique ID.
+   * Updates an existing user by ID with the provided data.
    *
    * @param id - UUID of the user to update.
-   * @param input - Partial user data to update.
+   * @param input - Partial data to update.
    * @returns The updated user entity.
    * @throws NotFoundException if the user does not exist.
+   * @throws ConflictException if the updated fields conflict with existing records (e.g., unique fields).
    */
   async updateUser(id: string, input: UpdateUserDto): Promise<UserEntity> {
     await this.getById(id);
-    const updated = await this.usersRepository.updateById(id, input);
-    return this.mapToEntity(updated);
+    try {
+      const updated = await this.usersRepository.updateById(id, input);
+      return this.mapToEntity(updated);
+    } catch (error) {
+      handlePrismaError(error);
+    }
   }
 
   /**
-   * Performs a soft delete on a user, deactivating their account.
+   * Soft deletes (deactivates) a user by marking them as inactive.
    *
-   * @param id - UUID of the user to deactivate.
-   * @param data - Object containing `deletedBy` (injected via interceptor).
-   * @returns The deactivated user entity.
-   * @throws NotFoundException if the user is not found.
+   * @param id - UUID of the user to delete.
+   * @param data - Audit metadata including `deletedBy` (from interceptor).
+   * @returns The soft-deleted user entity.
+   * @throws NotFoundException if the user does not exist.
    */
   async deleteUser(id: string, data: { deletedBy: string }): Promise<UserEntity> {
     await this.getById(id);
-    const deleted = await this.usersRepository.softDelete(id, data.deletedBy);
-    return this.mapToEntity(deleted);
+    try {
+      const deleted = await this.usersRepository.softDelete(id, data.deletedBy);
+      return this.mapToEntity(deleted);
+    } catch (error) {
+      handlePrismaError(error);
+    }
   }
 
   /**
-   * Transforms the full user model into a public-safe entity by excluding the password.
+   * Maps a raw user record from the database to a sanitized public-facing entity.
    *
-   * @param user - The full database record of the user.
-   * @returns A sanitized user entity.
+   * @param user - Raw database record including all fields.
+   * @returns The user entity with sensitive fields (e.g., password) excluded.
    */
   private mapToEntity(user: any): UserEntity {
     const { password, ...rest } = user;
