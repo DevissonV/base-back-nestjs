@@ -51,7 +51,7 @@ export class GenericCriteria {
       }
     }
 
-    if (this.dto.isActive === undefined) {
+    if ('isActive' in this.dto && this.dto.isActive === undefined) {
       where.isActive = true;
     }
 

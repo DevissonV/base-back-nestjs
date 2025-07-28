@@ -3,14 +3,13 @@ import {
   IsString,
   IsEnum,
   IsBoolean,
-  IsInt,
-  Min,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import { Role, DocumentType } from '@prisma/client';
+import { BaseSearchDto } from '@shared/dtos/base-search.dto';
 import { TransformToBoolean } from '@shared/utils/transform-boolean.util';
 
-export class SearchUsersDto {
+export class SearchUsersDto extends BaseSearchDto {
   @IsOptional()
   @IsString()
   username?: string;
@@ -30,9 +29,9 @@ export class SearchUsersDto {
   @IsOptional()
   @IsString()
   documentId?: string;
-  
+
   @IsOptional()
-  @Transform(({ value }) => (typeof value === 'string' ? value.toUpperCase() : value))
+  @Transform(({ value }) => typeof value === 'string' ? value.toUpperCase() : value)
   @IsEnum(DocumentType)
   documentType?: DocumentType;
 
@@ -40,16 +39,4 @@ export class SearchUsersDto {
   @TransformToBoolean()
   @IsBoolean()
   isActive?: string | boolean;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  page?: number = 1;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  limit?: number = 10;
 }
