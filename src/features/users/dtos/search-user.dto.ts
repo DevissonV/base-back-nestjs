@@ -20,7 +20,6 @@ export class SearchUsersDto {
   email?: string;
 
   @IsOptional()
-  @Transform(({ value }) => (typeof value === 'string' ? value.toUpperCase() : value))
   @IsEnum(Role)
   role?: Role;
 
