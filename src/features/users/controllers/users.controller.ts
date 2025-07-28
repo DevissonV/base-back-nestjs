@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
@@ -18,6 +19,7 @@ import { JwtPayload } from '@features/auth/types/jwt-payload.interface';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { RolesGuard } from '@shared/guards/roles.guard';
 import { ROLES } from '@shared/constants/roles.enum';
+import { SearchUsersDto } from '../dtos/search-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -54,11 +56,11 @@ export class UsersController {
    * 
    * @returns A list of user entities.
    */
+  @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(ROLES.ADMIN, ROLES.BODEGUERO, ROLES.VENDEDOR)
-  @Get()
-  findAll(): Promise<UserEntity[]> {
-    return this.usersService.getAllUsers();
+  findAll(@Query() dto: SearchUsersDto) {
+    return this.usersService.getAllUsers(dto);
   }
 
   /**
