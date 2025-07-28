@@ -9,11 +9,14 @@ import { UpdateUserDto } from '../dtos/update-user.dto';
 import { hashPassword } from '@shared/utils/hash.util';
 import { UserEntity } from '../entities/user.entity';
 import { SearchUsersDto } from '../dtos/search-user.dto';
-import { UserCriteria } from '../repository/user.criteria';
+import { CriteriaService } from '@shared/criteria/criteria.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+   constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly criteriaService: CriteriaService,
+  ) {}
 
   /**
    * Creates a new user after hashing the password.
@@ -42,13 +45,24 @@ export class UsersService {
    * @throws InternalServerErrorException if retrieval fails.
    */
   async getAllUsers(dto: SearchUsersDto) {
-  try {
-    const criteria = new UserCriteria(dto);
-    return await this.usersRepository.findAllWithCriteria(criteria);
-  } catch (error) {
-    throw new InternalServerErrorException('Error retrieving users');
+    try {
+      return this.criteriaService.getAll({
+        dto,
+        filterMap: {
+          username: { column: 'username', operator: 'ILIKE' },
+          email: { column: 'email', operator: 'ILIKE' },
+          phoneNumber: { column: 'phoneNumber', operator: 'ILIKE' },
+          role: { column: 'role', operator: '=' },
+          documentId: { column: 'documentId', operator: 'ILIKE' },
+          documentType: { column: 'documentType', operator: '=' },
+          isActive: { column: 'isActive', operator: '=' },
+        },
+        repository: this.usersRepository,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Error retrieving users');
+    }
   }
-}
 
   /**
    * Retrieves a user by ID.

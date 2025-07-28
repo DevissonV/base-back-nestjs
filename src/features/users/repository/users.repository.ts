@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { UserCriteria } from './user.criteria'; // al inicio del archivo
 
 @Injectable()
 export class UsersRepository {
@@ -108,28 +107,14 @@ export class UsersRepository {
    * @param criteria - An instance of `UserCriteria` containing filtering and pagination options.
    * @returns data users
    */
-  async findAllWithCriteria(criteria: UserCriteria) {
-    const where = criteria.buildWhereClause();
-    const { skip, take, page, limit } = criteria.getPagination();
-
+  async findWithCriteria({ where, skip, take, orderBy }) {
     const [users, total] = await this.prisma.$transaction([
-      this.prisma.user.findMany({
-        where,
-        skip,
-        take,
-        orderBy: { createdAt: 'desc' },
-      }),
+      this.prisma.user.findMany({ where, skip, take, orderBy }),
       this.prisma.user.count({ where }),
     ]);
 
     const sanitized = users.map(({ password, ...rest }) => rest);
-
-    return {
-      data: sanitized,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit),
-    };
+    return { data: sanitized, total };
   }
 
 }
