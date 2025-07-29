@@ -45,7 +45,7 @@ export class UsersService {
    * @returns An object containing the matched users and total count.
    */
   async getAllUsers(dto: SearchUsersDto) {
-    return this.criteriaService.getAll({
+    const result = await this.criteriaService.getAll({
       dto,
       filterMap: {
         username: { column: 'username', operator: 'ILIKE' },
@@ -58,6 +58,11 @@ export class UsersService {
       },
       repository: this.usersRepository,
     });
+  
+    return {
+      ...result,
+      data: result.data.map(this.mapToEntity),
+    };
   }
 
   /**
