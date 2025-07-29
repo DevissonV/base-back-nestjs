@@ -27,24 +27,24 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
-  phone_number?: string;
+  phoneNumber?: string;
 
   @IsOptional()
   @IsString()
-  document_id?: string;
+  documentId?: string;
 
   @IsOptional()
   @IsEnum(DocumentType)
-  document_type?: DocumentType;
+  documentType?: DocumentType;
 
   // Audit
   @IsOptional()
   @IsUUID()
   createdBy?: string;
 
-  // Audit
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   createdAt?: Date;
 }
+
